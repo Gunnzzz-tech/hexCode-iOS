@@ -1,0 +1,6 @@
+framework module Pods_color_generation_color_generationUITests {
+  umbrella header "Pods-color-generation-color-generationUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

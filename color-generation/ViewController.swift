@@ -6,7 +6,9 @@
 //
 
 import UIKit
+import FirebaseFirestore
 import Network
+
 
 
 class ViewController: UIViewController {
@@ -21,12 +23,24 @@ class ViewController: UIViewController {
     var savedColors: [ColorEntry] = []
     let monitor = NWPathMonitor()
     let monitorQueue = DispatchQueue(label: "NetworkMonitor")
+    let db = Firestore.firestore()
+    //let monitor = NWPathMonitor()
+    var isOnline = false
 
 
+    @IBAction func viewcardButton(_ sender: Any) {
+        performSegue(withIdentifier: "goToResults", sender: self)
+        
+    }
+    @IBOutlet weak var viewCardButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         loadColorsFromUserDefaults()
         startNetworkMonitoring()
+        //let db = Firestore.firestore()
+        //let monitor = NWPathMonitor()
+        //var isOnline = false
+
     }
 
     @IBAction func addCodeButton(_ sender: Any) {
@@ -53,13 +67,43 @@ class ViewController: UIViewController {
         let timestamp = getCurrentTimestamp()
         addColorCard(hex: hex, timestamp: timestamp)
         savedColors.append(ColorEntry(hexCode: hex, timestamp: timestamp))
+        syncColorToFirestore(hex: hex, timestamp: timestamp)
+
         saveColorsToUserDefaults()
 
         generatedHexCode = hex.uppercased()
-        performSegue(withIdentifier: "goToResults", sender: self)
+//        performSegue(withIdentifier: "goToResults", sender: self)
     }
-    
+    func syncColorToFirestore(hex: String, timestamp: String) {
+        if networkStatusLabel.text != "Online" {
+            print("📡 Offline — not syncing to Firestore.")
+            return
+        }
 
+        db.collection("colors").addDocument(data: [
+            "hex": hex,
+            "timestamp": timestamp
+        ]) { error in
+            if let error = error {
+                print("❌ Firestore error: \(error.localizedDescription)")
+            } else {
+                print("✅ Synced \(hex) at \(timestamp) to Firestore.")
+            }
+        }
+    }
+
+    //@IBOutlet weak var hexStackView: UIStackView!
+    @IBAction func clearActionButton(_ sender: Any) {
+        for view in colorStackView.arrangedSubviews {
+            colorStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+
+        savedColors.removeAll()
+        UserDefaults.standard.removeObject(forKey: "SavedColors")
+    }
+
+    
     @IBAction func generateHexcode(_ sender: UIButton) {
         let red = Int.random(in: 0...255)
         let green = Int.random(in: 0...255)
@@ -70,10 +114,12 @@ class ViewController: UIViewController {
 
         addColorCard(hex: hexCode, timestamp: timestamp)
         savedColors.append(ColorEntry(hexCode: hexCode, timestamp: timestamp))
+        syncColorToFirestore(hex: hexCode, timestamp: timestamp)
+
         saveColorsToUserDefaults()
 
         generatedHexCode = hexCode
-        performSegue(withIdentifier: "goToResults", sender: self)
+//        performSegue(withIdentifier: "goToResults", sender: self)
     }
     func startNetworkMonitoring() {
         monitor.pathUpdateHandler = { [weak self] path in

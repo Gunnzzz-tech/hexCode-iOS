@@ -1,0 +1,10 @@
+${PODS_ROOT}/Target Support Files/Pods-color-generation-color-generationUITests/Pods-color-generation-color-generationUITests-resources.sh
+${PODS_CONFIGURATION_BUILD_DIR}/BoringSSL-GRPC/openssl_grpc.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/Protobuf/Protobuf_Privacy.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/abseil/xcprivacy.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/grpcpp.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/gRPC-Core/grpc.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/gRPC/gRPCCertificates.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/gRPC/GRPCClient.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/leveldb-library/leveldb_Privacy.bundle
